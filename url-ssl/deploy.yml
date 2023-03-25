@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: url
+  name: url-deployment
+  namespace: url
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: url
+  template:
+    metadata:
+      labels:
+        app: url
+    spec:
+      containers:
+        - image: rishikeshops/url-shortner
+          name: url
+          ports:
+            - containerPort: 3000
+          env:
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: aws-credentials
+                  key: access-key-id
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: aws-credentials
+                  key: secret-access-key
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: url-service
+  annotations:
+    #service.beta.kubernetes.io/aws-load-balancer-type: "alb"
+    #service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+    #service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:acm:us-east-1:162477790861:certificate/689cd8ff-23c8-4d3f-a56f-9e1a3c864098
+    #service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
+  labels:
+    app: url
+  namespace: url
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 3000
+    protocol: TCP
+    targetPort: 3000
+      #   nodePort: 31000
+  selector:
+    app: url
+
+

@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: url-ingress
+spec:
+  rules:
+  - host: "ssl-1484263029.us-east-1.elb.amazonaws.com"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: url-service
+            port:
+              number: 3000
+  - host: "*.ssl-1484263029.us-east-1.elb.amazonaws.com"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: url-service
+            port:
+              number: 3000
+

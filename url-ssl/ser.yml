@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: url-service
+  labels:
+    app: url
+  namespace: url
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "alb"
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "arn:aws:acm:us-east-1:162477790861:certificate/689cd8ff-23c8-4d3f-a56f-9e1a3c864098"
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
+    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
+    service.beta.kubernetes.io/aws-load-balancer-ssl-negotiation-policy: "ELBSecurityPolicy-TLS-1-2-2017-01"
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+    service.beta.kubernetes.io/aws-load-balancer-target-group-arn: "arn:aws:elasticloadbalancing:us-east-1:162477790861:targetgroup/testTG/ed87ca205f9eb756"
+spec:
+  selector:
+    app: url
+  type: LoadBalancer
+  ports:
+  - name: http
+    port: 80
+    targetPort: 3000
+  - name: https
+    port: 443
+    targetPort: 3000
